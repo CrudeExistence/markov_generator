@@ -1,6 +1,8 @@
 """Generate Markov text from text files."""
 
 from random import choice
+# import numpy as np
+import sys
 
 
 def open_and_read_file(file_path):
@@ -45,21 +47,31 @@ def make_chains(text_string):
 
     # your code goes here
     words = text_string.split()
+    words.append(None)
 
-    def make_pairs(str):
-        for wordses in range(len(str) - 1):
-            yield (str[wordses], str[wordses + 1])
+    for i in range(len(words) - 2):
+        key = (words[i], words[i + 1])
+        value = words[i + 2]
 
-    pairs = make_pairs(words)
+        if key not in chains:
+            chains[key] = []
 
-    # print(pairs)    
-    for word_1, word_2 in pairs:
-        if word_1 in chains.keys():
-            chains[word_1].append(word_2)
-        else:
-            chains[word_1] = [word_2]
+        chains[key].append(value)
+
+    # def make_pairs(str):
+    #     for wordses in range(len(str) - 1):
+    #         yield (str[wordses], str[wordses + 1])
+
+    # pairs = make_pairs(words)
+
+    # # print(pairs)    
+    # for word_1, word_2 in pairs:
+    #     if word_1 in chains.keys():
+    #         chains[word_1].append(word_2)
+    #     else:
+    #         chains[word_1] = [word_2]
     
-    print(chains)
+    # print(chains)
     return chains
 
 
@@ -70,10 +82,22 @@ def make_text(chains):
 
     # your code goes here
 
+    key = choice(list(chains.keys()))
+    words = [key[0], key[1]]
+    word = choice(chains[key])
+
+    while word is not None:
+        key = (key[1], word)
+        words.append(word)
+        word = choice(chains[key])
+
+
     return ' '.join(words)
 
 
-input_path = 'green-eggs.txt'
+
+input_path = 'gettysburg.txt'
+# input_path = sys.argv[1]
 
 # Open the file and turn it into one long string
 input_text = open_and_read_file(input_path)
